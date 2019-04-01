@@ -19,6 +19,15 @@ namespace ai_ass1
                 case "DFS":
                     agent = new DFSAgent(map);
                     break;
+                case "BFS":
+                    agent = new BFSAgent(map);
+                    break;
+                case "GBFS":
+                    agent = new GBFSAgent(map);
+                    break;
+                case "AS":
+                    agent = new ASAgent(map);
+                    break;
                 default:
                     agent = new DFSAgent(map);
                     break;
