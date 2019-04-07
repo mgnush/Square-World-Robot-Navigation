@@ -28,6 +28,9 @@ namespace ai_ass1
                 case "AS":
                     agent = new ASAgent(map);
                     break;
+                case "BDS":
+                    agent = new BDSAgent(map);
+                    break;
                 default:
                     agent = new DFSAgent(map);
                     break;

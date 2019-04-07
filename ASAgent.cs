@@ -37,7 +37,7 @@ namespace ai_ass1
             int manhattanDist = Math.Abs(nodeCoords.x - greenCells.First().x) + Math.Abs(nodeCoords.y - greenCells.First().y);
             int dist;
 
-            foreach (Coords c in _map.GetGreenCells())
+            foreach (Coords c in greenCells)
             {
                 dist = Math.Abs(nodeCoords.x - c.x) + Math.Abs(nodeCoords.y - c.y);
                 if (dist < manhattanDist)
@@ -56,7 +56,7 @@ namespace ai_ass1
             int g = GFunction(minFNode);
             int manhattan = Heuristic(minFNode.Coords);
             int fMin = g + manhattan;
-            int f = 0; ;
+            int f;
 
             foreach (Node n in frontier)
             {
@@ -81,7 +81,7 @@ namespace ai_ass1
             frontier.Remove(minFNode);
             frontier.Insert(0, minFNode);
 
-            Console.WriteLine("{0}, {1}, {2}", Heuristic(minFNode.Coords), GFunction(minFNode), minFNode.Move);
+            Console.WriteLine("{0},{1}, {2}, {3}, {4}", minFNode.Coords.x, minFNode.Coords.y, Heuristic(minFNode.Coords), GFunction(minFNode), minFNode.Move);
         }
 
         public override List<Node> Expand(Node node)
