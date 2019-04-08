@@ -38,7 +38,7 @@ namespace ai_ass1
         }
 
         public Coords Coords { get => _coords; }
-        public Move Move { get => _move; }
+        public Move Move { get => _move; set => _move = value; } 
         public Node ParentNode { get => _parentNode; }
 
         public bool IsRepeatedState()

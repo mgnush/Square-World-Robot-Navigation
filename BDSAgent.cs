@@ -25,46 +25,79 @@ namespace ai_ass1
         {
             List<Node> moves = new List<Node>();
             List<Node> frontierForward = new List<Node>();
-            List<Node> frontierBackward = new List<Node>();
+            List<List<Node>> frontiersBackward = new List<List<Node>>();
             Node nodeForward = new Node(_redCoords, Move.NOOP, null);
-            Node nodeBackward = new Node(_redCoords, Move.NOOP, null);
-            bool touch = false;
-
+            Node nodeBackward;
+            Node touchNode = null;
             frontierForward.Add(nodeForward);   // Add initial state to frontier
-            frontierBackward.Add(nodeBackward);
+
+            foreach (Coords c in _map.GetGreenCells())
+            {
+                List<Node> frontierBackward = new List<Node>();
+                nodeBackward = new Node(c, Move.NOOP, null);
+                frontierBackward.Add(nodeBackward);
+                frontiersBackward.Add(frontierBackward);
+            }
+            
+            bool touch = false;
 
             do
             {
-                if ((frontierForward.Count == 0) || (frontierBackward.Count == 0)) { return null; }
+                if (frontierForward.Count == 0) { return null; }
+                if (frontiersBackward.Count == 0) { return null; }
+                List<List<Node>> deadEnds = new List<List<Node>>();
+                foreach(List<Node> ln in frontiersBackward)
+                {
+                    if (ln.Count == 0) { deadEnds.Add(ln); }
+                }
+                foreach(List<Node> ln in deadEnds)
+                {
+                    frontiersBackward.Remove(ln);
+                }
+
                 while (frontierForward.First().IsRepeatedState())
                 {
                     frontierForward.RemoveAt(0);
                 }
-                while (frontierBackward.First().IsRepeatedState())
+                foreach (List<Node> ln in frontiersBackward)
                 {
-                    frontierForward.RemoveAt(0);
+                    while (ln.First().IsRepeatedState())
+                    {
+                        ln.RemoveAt(0);
+                    }
                 }
 
                 nodeForward = frontierForward.First();
-                nodeBackward = frontierBackward.First();
                 frontierForward.RemoveAt(0);
-                frontierBackward.RemoveAt(0);
-
-                if (nodeForward.Coords.IsEqual(nodeBackward.Coords))
-                {
-                    touch = true;
-                }
                 frontierForward.AddRange(Expand(nodeForward));
-                frontierBackward.AddRange(Expand(nodeBackward));
+
+                foreach (List<Node> ln in frontiersBackward)
+                {
+                    nodeBackward = ln.First();
+                    ln.RemoveAt(0);
+                    if (nodeForward.Coords.IsEqual(nodeBackward.Coords))
+                    {
+                        touch = true;
+                        touchNode = nodeBackward;
+                        break;
+                    }                    
+                    ln.AddRange(Expand(nodeBackward));
+                } 
 
             } while (!touch);
 
-            while (node.ParentNode != null)
+            while (nodeForward.ParentNode != null)
             {
-                moves.Add(node);
-                node = node.ParentNode;
+                moves.Add(nodeForward);
+                nodeForward = nodeForward.ParentNode;
             }
             moves.Reverse();
+            while (touchNode.ParentNode != null)
+            {
+                touchNode.Move = touchNode.Move.Reverse();
+                moves.Add(touchNode);
+                touchNode = touchNode.ParentNode;
+            }
             return moves;
         }
     }

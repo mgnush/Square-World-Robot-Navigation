@@ -15,6 +15,31 @@ namespace ai_ass1
         GREEN
     }
 
+    public static class MoveExtensions
+    {
+        public static Move Reverse(this Move move)
+        {
+            switch (move)
+            {
+                case Move.UP:
+                    return Move.DOWN;
+                    
+                case Move.LEFT:
+                    return Move.RIGHT;
+                    
+                case Move.DOWN:
+                    return Move.UP;
+                    
+                case Move.RIGHT:
+                    return Move.LEFT;
+                    
+                default:
+                    return Move.NOOP;
+                    
+            }
+        }
+    }
+
     public enum Move
     {
         UP,

@@ -81,7 +81,7 @@ namespace ai_ass1
             frontier.Remove(minFNode);
             frontier.Insert(0, minFNode);
 
-            Console.WriteLine("{0},{1}, {2}, {3}, {4}", minFNode.Coords.x, minFNode.Coords.y, Heuristic(minFNode.Coords), GFunction(minFNode), minFNode.Move);
+            //Console.WriteLine("{0},{1}, {2}, {3}, {4}", minFNode.Coords.x, minFNode.Coords.y, Heuristic(minFNode.Coords), GFunction(minFNode), minFNode.Move);
         }
 
         public override List<Node> Expand(Node node)
