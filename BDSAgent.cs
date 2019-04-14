@@ -46,6 +46,7 @@ namespace ai_ass1
                 if (frontierForward.Count == 0) { return null; }
                 if (frontiersBackward.Count == 0) { return null; }
                 List<List<Node>> deadEnds = new List<List<Node>>();
+                // Remove backward frontiers that are dead ends, i.e. the goal is enclosed by walls
                 foreach(List<Node> ln in frontiersBackward)
                 {
                     if (ln.Count == 0) { deadEnds.Add(ln); }
@@ -54,17 +55,29 @@ namespace ai_ass1
                 {
                     frontiersBackward.Remove(ln);
                 }
+                deadEnds.Clear();
 
                 while (frontierForward.First().IsRepeatedState())
                 {
                     frontierForward.RemoveAt(0);
+                    if (frontierForward.Count == 0) { return null; }
                 }
+
                 foreach (List<Node> ln in frontiersBackward)
                 {
                     while (ln.First().IsRepeatedState())
                     {
                         ln.RemoveAt(0);
+                        if (ln.Count == 0)
+                        {
+                            deadEnds.Add(ln);
+                            break;
+                        }
                     }
+                }
+                foreach (List<Node> ln in deadEnds)
+                {
+                    frontiersBackward.Remove(ln);
                 }
 
                 nodeForward = frontierForward.First();

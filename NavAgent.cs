@@ -11,11 +11,21 @@ namespace ai_ass1
         private Coords _coords; // Current coords
         private Move _move;   // The move that got us here
         private Node _parentNode;
+        private int _depth, _f;
 
         public Node(Coords coords0, Move move0, Node node0)
         {
             _move = move0;
             _parentNode = node0;
+            _f = 0;
+
+            if (node0 == null)
+            {
+                _depth = 0;
+            } else
+            {
+                _depth = node0.Depth + 1;
+            }
 
             switch (_move)
             {
@@ -40,6 +50,8 @@ namespace ai_ass1
         public Coords Coords { get => _coords; }
         public Move Move { get => _move; set => _move = value; } 
         public Node ParentNode { get => _parentNode; }
+        public int Depth { get => _depth; }
+        public int F { get => _f; set => _f = value; }
 
         public bool IsRepeatedState()
         {

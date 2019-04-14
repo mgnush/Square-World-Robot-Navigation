@@ -38,27 +38,25 @@ namespace ai_ass1
         private void SortFrontier(List<Node> frontier)
         {
             // No need to sort entire frontier
-            Node minManhattanNode = frontier.First();
-            int minManhattan = Heuristic(minManhattanNode.Coords);
-            int manhattan;
+            Node minFNode = frontier.First();
+
             foreach (Node n in frontier)
             {
-                manhattan = Heuristic(n.Coords);
-                if (manhattan < minManhattan)
+                if (n.F < minFNode.F)
                 {
-                    minManhattanNode = n;
-                    minManhattan = manhattan;
+                    minFNode = n;
                 }
-                else if (manhattan == minManhattan)
+                else if (n.F == minFNode.F)
                 {
-                    if (n.Move < minManhattanNode.Move)
+                    if (n.Move < minFNode.Move)
                     {
-                        minManhattanNode = n;
+                        minFNode = n;
                     }
                 }
             }
-            frontier.Remove(minManhattanNode);
-            frontier.Insert(0, minManhattanNode);
+            // Move min node to front
+            frontier.Remove(minFNode);
+            frontier.Insert(0, minFNode);
         }
 
         public override List<Node> Expand(Node node)
@@ -74,6 +72,11 @@ namespace ai_ass1
             foreach(Node n in repeatedNodes)
             {
                 expandedNode.Remove(n);
+            }
+
+            foreach(Node n in expandedNode)
+            {
+                n.F = Heuristic(n.Coords);
             }
 
             return expandedNode;

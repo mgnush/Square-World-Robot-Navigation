@@ -35,10 +35,17 @@ namespace ai_ass1
                     agent = new DFSAgent(map);
                     break;
             }
-            
-            foreach(Node n in agent.TreeSearch())
+
+            if (agent.TreeSearch() == null)
             {
-                Console.WriteLine(n.Move.ToString());
+                Console.WriteLine("There is no path to the goal.");
+            }
+            else
+            {
+                foreach (Node n in agent.TreeSearch())
+                {
+                    Console.WriteLine(n.Move.ToString());
+                }
             }
         }
     }

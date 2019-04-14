@@ -234,7 +234,7 @@ namespace ai_ass1
         public List<Node> GetNodes(Node node)
         {
             List<Node> newNodes = new List<Node>();
-            foreach(Move m in GetMoves(node.Coords))
+            foreach (Move m in GetMoves(node.Coords))
             {
                 newNodes.Add(new Node(node.Coords, m, node));
             }

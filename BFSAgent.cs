@@ -36,7 +36,9 @@ namespace ai_ass1
                 while (frontier.First().IsRepeatedState())
                 {
                     frontier.RemoveAt(0);
+                    if (frontier.Count == 0) { return null; }
                 }
+                
                 node = frontier.First();
                 frontier.RemoveAt(0);
                 

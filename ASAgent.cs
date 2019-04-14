@@ -13,20 +13,6 @@ namespace ai_ass1
 
         }
 
-        private int GFunction(Node node)
-        {
-            int depth = 0;
-            Node parentNode = node.ParentNode;
-
-            while (parentNode != null)
-            {
-                depth++;
-                parentNode = parentNode.ParentNode;
-            }
-
-            return depth;
-        }
-
         /* Get the manhattan distance to the closest goal
          * @param nodeCoords The coords of the node in question
          * @return The distance
@@ -53,23 +39,14 @@ namespace ai_ass1
         {
             // No need to sort entire frontier
             Node minFNode = frontier.First();
-            int g = GFunction(minFNode);
-            int manhattan = Heuristic(minFNode.Coords);
-            int fMin = g + manhattan;
-            int f;
 
             foreach (Node n in frontier)
             {
-                manhattan = Heuristic(n.Coords);
-                g = GFunction(n);
-                f = manhattan + g;
-
-                if (f < fMin)
+                if (n.F < minFNode.F)
                 {
                     minFNode = n;
-                    fMin = f;
                 }
-                else if (f == fMin)
+                else if (n.F == minFNode.F)
                 {
                     if (n.Move < minFNode.Move)
                     {
@@ -77,7 +54,7 @@ namespace ai_ass1
                     }
                 }
             }
-
+            // Move min node to front
             frontier.Remove(minFNode);
             frontier.Insert(0, minFNode);
 
@@ -88,6 +65,11 @@ namespace ai_ass1
         {
             List<Node> expandedNode = new List<Node>();
             expandedNode.AddRange(_map.GetNodes(node));
+
+            foreach (Node n in expandedNode)
+            {
+                n.F = n.Depth + Heuristic(n.Coords);
+            }
 
             return expandedNode;
         }
