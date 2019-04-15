@@ -31,6 +31,9 @@ namespace ai_ass1
                 case "BDS":
                     agent = new BDSAgent(map);
                     break;
+                case "RBFS":
+                    agent = new RBFSAgent(map);
+                    break;
                 default:
                     agent = new DFSAgent(map);
                     break;

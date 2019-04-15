@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ai_ass1
 {
-    public class Node
+    public class Node : IDisposable
     {
         private Coords _coords; // Current coords
         private Move _move;   // The move that got us here
@@ -22,7 +22,8 @@ namespace ai_ass1
             if (node0 == null)
             {
                 _depth = 0;
-            } else
+            }
+            else
             {
                 _depth = node0.Depth + 1;
             }
@@ -46,7 +47,7 @@ namespace ai_ass1
                     break;
             }
         }
-
+         
         public Coords Coords { get => _coords; }
         public Move Move { get => _move; set => _move = value; } 
         public Node ParentNode { get => _parentNode; }
@@ -62,6 +63,21 @@ namespace ai_ass1
                 parentNode = parentNode.ParentNode;
             }
             return false;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                // free managed resources
+            }
+            // free native resources if there are any.
         }
     }
 
