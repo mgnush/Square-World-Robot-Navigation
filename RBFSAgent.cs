@@ -35,6 +35,10 @@ namespace ai_ass1
             return manhattanDist;
         }
 
+        /* Retrieves the min node in a list of nodes, based on f value
+         * @param nodes The list of nodes 
+         * @return The min node in the list of nodes
+         */
         private Node FindMinNode(List<Node> nodes)
         {
             Node minFNode = nodes.First();   // Min frontier node
@@ -56,6 +60,11 @@ namespace ai_ass1
             return minFNode;
         }
 
+        /* Retrieves the min node of a certain depth in a list of nodes, based on f value.
+         * @param nodes The list of nodes 
+         * @param depth The depth of the node
+         * @return The min node in the list of nodes
+         */
         private Node FindMinNode(List<Node> nodes, int depth)
         {
             List<Node> eqDepthNodes = new List<Node>();
@@ -69,6 +78,11 @@ namespace ai_ass1
             return FindMinNode(eqDepthNodes);
         }
 
+        /* Places the minimum node in the front of the frontier.
+        * Does not sort the rest of the frontier.
+        * Rolls back the tree if minimum node is not a leaf of maximum depth
+        * @param frontier The frontier of nodes to sort
+        */
         private void SortFrontier(List<Node> frontier)
         {
             int depth = frontier.Last().Depth; //Last element always has max depth
@@ -78,7 +92,7 @@ namespace ai_ass1
 
             if (minFNode.Depth < depth)
             {
-                //Roll back
+                //Roll back - remove and dispose all nodes of larger depth than min node
                 List<Node> rollBackNodes = new List<Node>();
                 Node deepMinNode = FindMinNode(frontier, depth);
                 int f = deepMinNode.F;
@@ -98,12 +112,13 @@ namespace ai_ass1
                 {
                     frontier.Remove(n);
                     n.Dispose();
+                    NodeCount--;    // decrement tree node count
                 }
             }
 
             frontier.Insert(0, minFNode);
 
-            Console.WriteLine("{0},{1} ", minFNode.Coords.x, minFNode.Coords.y);
+            //Console.WriteLine("{0},{1} ", minFNode.Coords.x, minFNode.Coords.y);
         }
 
         public override List<Node> Expand(Node node)
@@ -116,12 +131,14 @@ namespace ai_ass1
                 n.F = n.Depth + Heuristic(n.Coords);
             }
 
+            NodeCount += expandedNode.Count;   // Increment tree node count
+
             return expandedNode;
         }
 
         public override List<Node> TreeSearch()
         {
-            List<Node> moves = new List<Node>();
+            List<Node> moves = new List<Node>();   // The path from starting point to goal
             List<Node> frontier = new List<Node>();
             Node node = new Node(_redCoords, Move.NOOP, null);
             bool reachedGoal = false;
@@ -131,8 +148,14 @@ namespace ai_ass1
             do
             {
                 if (frontier.Count == 0) { return null; }
-                
-                SortFrontier(frontier);
+
+                // Remove first frontier item when it's a repeated state
+                while (frontier.First().IsRepeatedState())
+                {
+                    frontier.RemoveAt(0);
+                    if (frontier.Count == 0) { return null; }
+                    SortFrontier(frontier);
+                }
 
                 node = frontier.First();
                 frontier.RemoveAt(0);
@@ -145,12 +168,13 @@ namespace ai_ass1
 
             } while (!reachedGoal);
 
+            // Backtrack nodes from node that reached goal to initial node
             while (node.ParentNode != null)
             {
                 moves.Add(node);
                 node = node.ParentNode;
             }
-            moves.Reverse();
+            moves.Reverse();   // Reverse to print the moves starting from initial node
 
             return moves;
         }

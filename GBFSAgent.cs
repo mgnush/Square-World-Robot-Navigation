@@ -35,6 +35,10 @@ namespace ai_ass1
             return manhattanDist;
         }
 
+        /* Places the minimum node in the front of the frontier.
+        * Does not sort the rest of the frontier
+        * @param frontier The frontier of nodes to sort
+        */
         private void SortFrontier(List<Node> frontier)
         {
             // No need to sort entire frontier
@@ -64,27 +68,19 @@ namespace ai_ass1
             List<Node> expandedNode = new List<Node>();
             expandedNode.AddRange(_map.GetNodes(node));
 
-            List<Node> repeatedNodes = new List<Node>();
-            foreach (Node n in expandedNode)
-            {
-                if (n.IsRepeatedState()) { repeatedNodes.Add(n); }
-            }
-            foreach(Node n in repeatedNodes)
-            {
-                expandedNode.Remove(n);
-            }
-
             foreach(Node n in expandedNode)
             {
                 n.F = Heuristic(n.Coords);
             }
+            
+            NodeCount += expandedNode.Count;   // Increment tree node count
 
             return expandedNode;
         }
 
         public override List<Node> TreeSearch()
         {
-            List<Node> moves = new List<Node>();
+            List<Node> moves = new List<Node>();   // The path from starting point to goal
             List<Node> frontier = new List<Node>();
             Node node = new Node(_redCoords, Move.NOOP, null);
             bool reachedGoal = false;
@@ -94,8 +90,14 @@ namespace ai_ass1
             do
             {
                 if (frontier.Count == 0) { return null; }
-                //sort
-                SortFrontier(frontier);
+
+                // Remove first frontier item when it's a repeated state
+                while (frontier.First().IsRepeatedState())
+                {
+                    frontier.RemoveAt(0);
+                    if (frontier.Count == 0) { return null; }
+                    SortFrontier(frontier);
+                }
 
                 node = frontier.First();
                 frontier.RemoveAt(0);
@@ -104,16 +106,18 @@ namespace ai_ass1
                 {
                     reachedGoal = true;
                 }
+
                 frontier.AddRange(Expand(node));
                 
             } while (!reachedGoal);
 
+            // Backtrack nodes from node that reached goal to initial node
             while (node.ParentNode != null)
             {
                 moves.Add(node);
                 node = node.ParentNode;
             }
-            moves.Reverse();
+            moves.Reverse();   // Reverse to print the moves starting from initial node
             return moves;
         }
     }

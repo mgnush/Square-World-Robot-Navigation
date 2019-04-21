@@ -17,6 +17,9 @@ namespace ai_ass1
 
     public static class MoveExtensions
     {
+        /* Reverses the move, i.e. left = right
+         * @param move The move to reverse
+         */
         public static Move Reverse(this Move move)
         {
             switch (move)
@@ -68,7 +71,7 @@ namespace ai_ass1
 
     public class GridMap
     {
-        private CellStatus[,] _cells;
+        private CellStatus[,] _cells;   // The map
         private int _n, _m;   // cols, rows
 
         public GridMap(string[] lines)
@@ -89,7 +92,7 @@ namespace ai_ass1
             int.TryParse(values[1], out _n);
             _cells = new CellStatus[_n, _m];
             values.Clear();
-            Console.WriteLine("The map is {0}x{1}", _n, _m);
+            //Console.WriteLine("The map is {0}x{1}", _n, _m);
 
             // Get initial agent position (red cell)
             numbers = Regex.Split(lines[1], @"\D+");
@@ -104,7 +107,7 @@ namespace ai_ass1
             int.TryParse(values[1], out int agentPosY);
             _cells[agentPosX, agentPosY] = CellStatus.RED;
             values.Clear();
-            Console.WriteLine("The red cell is at {0},{1}", agentPosX, agentPosY);
+            //Console.WriteLine("The red cell is at {0},{1}", agentPosX, agentPosY);
 
             // Get goal cells (green cell)
             numbers = Regex.Split(lines[2], @"\D+");
@@ -120,7 +123,7 @@ namespace ai_ass1
                 int.TryParse(values[i], out int goalPosX);
                 int.TryParse(values[i + 1], out int goalPosY);
                 _cells[goalPosX, goalPosY] = CellStatus.GREEN;
-                Console.WriteLine("There is a goal cell at {0},{1}", goalPosX, goalPosY);
+                //Console.WriteLine("There is a goal cell at {0},{1}", goalPosX, goalPosY);
             }
             values.Clear();
 
@@ -142,7 +145,7 @@ namespace ai_ass1
                     for (int k = y0; k < (y0 + int.Parse(values[3])); k++)
                     {
                         _cells[j, k] = CellStatus.GREY;
-                        Console.WriteLine("{0},{1} IS GREY", j, k);
+                        //Console.WriteLine("{0},{1} IS GREY", j, k);
                     }
                 }
                 values.Clear();
@@ -197,6 +200,11 @@ namespace ai_ass1
             return false;
         }
 
+        /* Retrieves the moves which can be performed from a set of coords
+         * based on map boundaries and surrounding grey cells.
+         * @param coords The coords to move from
+         * @return The possible moves
+         */
         public List<Move> GetMoves(Coords coords)
         {
             //Console.WriteLine("{0},{1}", coords.x, coords.y);
@@ -231,6 +239,10 @@ namespace ai_ass1
             return possibleMoves;
         }
 
+        /* Retrieves the nodes which can expand from the given node
+         * @param nodes The node to expand
+         * @return The list of new child nodes
+         */
         public List<Node> GetNodes(Node node)
         {
             List<Node> newNodes = new List<Node>();
@@ -240,5 +252,7 @@ namespace ai_ass1
             }
             return newNodes;
         }
+
+        
     }
 }

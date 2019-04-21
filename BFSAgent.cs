@@ -18,6 +18,8 @@ namespace ai_ass1
             List<Node> expandedNode = new List<Node>();
             expandedNode.AddRange(_map.GetNodes(node));
 
+            NodeCount += expandedNode.Count;   // Increment tree node count
+
             return expandedNode;
         }
 
@@ -33,6 +35,8 @@ namespace ai_ass1
             do
             {
                 if (frontier.Count == 0) { return null; }
+
+                // Remove front nodes in the frontier LIFO queue until the first node is not a repeated state
                 while (frontier.First().IsRepeatedState())
                 {
                     frontier.RemoveAt(0);
@@ -46,16 +50,17 @@ namespace ai_ass1
                 {
                     reachedGoal = true;
                 }
-                frontier.AddRange(Expand(node));
+                frontier.AddRange(Expand(node));   // Add expanded nodes to the end (LIFO queue)
 
             } while (!reachedGoal);
 
+            // Backtrack nodes from node that reached goal to initial node
             while (node.ParentNode != null)
             {
                 moves.Add(node);
                 node = node.ParentNode;
             }
-            moves.Reverse();
+            moves.Reverse(); // Reverse to print the moves starting from initial node
             return moves;
         }
     }

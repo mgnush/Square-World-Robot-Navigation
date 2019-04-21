@@ -23,6 +23,7 @@ namespace ai_ass1
             int manhattanDist = Math.Abs(nodeCoords.x - greenCells.First().x) + Math.Abs(nodeCoords.y - greenCells.First().y);
             int dist;
 
+            //Pick the closest goal
             foreach (Coords c in greenCells)
             {
                 dist = Math.Abs(nodeCoords.x - c.x) + Math.Abs(nodeCoords.y - c.y);
@@ -35,6 +36,10 @@ namespace ai_ass1
             return manhattanDist;
         }
 
+        /* Places the minimum node in the front of the frontier.
+         * Does not sort the rest of the frontier
+         * @param frontier The frontier of nodes to sort
+         */
         private void SortFrontier(List<Node> frontier)
         {
             // No need to sort entire frontier
@@ -61,6 +66,7 @@ namespace ai_ass1
             //Console.WriteLine("{0},{1}, {2}, {3}, {4}", minFNode.Coords.x, minFNode.Coords.y, Heuristic(minFNode.Coords), GFunction(minFNode), minFNode.Move);
         }
 
+      
         public override List<Node> Expand(Node node)
         {
             List<Node> expandedNode = new List<Node>();
@@ -71,23 +77,32 @@ namespace ai_ass1
                 n.F = n.Depth + Heuristic(n.Coords);
             }
 
+            NodeCount += expandedNode.Count;   // Increment tree node count
+
             return expandedNode;
         }
 
         public override List<Node> TreeSearch()
         {
-            List<Node> moves = new List<Node>();
+            List<Node> moves = new List<Node>();   // The path from starting point to goal
             List<Node> frontier = new List<Node>();
             Node node = new Node(_redCoords, Move.NOOP, null);
             bool reachedGoal = false;
 
             frontier.Add(node);   // Add initial state to frontier
 
-            do
+            do 
             {
                 if (frontier.Count == 0) { return null; }
-                //sort
-                SortFrontier(frontier);
+
+                // Remove first frontier item when it's a repeated state
+                // Not needed for AS, but needed to prevent infinite loop when no solution
+                while (frontier.First().IsRepeatedState())
+                {
+                    frontier.RemoveAt(0);
+                    if (frontier.Count == 0) { return null; }
+                    SortFrontier(frontier);
+                }                
 
                 node = frontier.First();
                 frontier.RemoveAt(0);
@@ -96,16 +111,18 @@ namespace ai_ass1
                 {
                     reachedGoal = true;
                 }
+
                 frontier.AddRange(Expand(node));
 
             } while (!reachedGoal);
 
+            // Backtrack nodes from node that reached goal to initial node
             while (node.ParentNode != null)
             {
                 moves.Add(node);
                 node = node.ParentNode;
             }
-            moves.Reverse();
+            moves.Reverse();   // Reverse to print the moves starting from initial node
 
             return moves;
         }
