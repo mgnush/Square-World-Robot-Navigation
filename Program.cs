@@ -49,7 +49,7 @@ namespace ai_ass1
             {
                 int nodes = agent.NodeCount;
                 Console.WriteLine("{0} {1} {2} \n", args[0], args[1], nodes);
-                Console.WriteLine("There is no path to the goal.");
+                Console.WriteLine("No solution found.");
             }
             else
             {

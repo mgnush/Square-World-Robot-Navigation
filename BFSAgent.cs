@@ -36,7 +36,7 @@ namespace ai_ass1
             {
                 if (frontier.Count == 0) { return null; }
 
-                // Remove front nodes in the frontier LIFO queue until the first node is not a repeated state
+                // Remove front nodes in the frontier FIFO queue until the first node is not a repeated state
                 while (frontier.First().IsRepeatedState())
                 {
                     frontier.RemoveAt(0);
@@ -50,7 +50,7 @@ namespace ai_ass1
                 {
                     reachedGoal = true;
                 }
-                frontier.AddRange(Expand(node));   // Add expanded nodes to the end (LIFO queue)
+                frontier.AddRange(Expand(node));   // Add expanded nodes to the end (FIFO queue)
 
             } while (!reachedGoal);
 
